@@ -24,7 +24,7 @@ Swift是苹果新推出的开发语言，受到了广泛关注。
 
 
 
-  [1] https://github.com/grant/swift-cheat-sheet "Swift Cheat Sheet"
+[1]: https://github.com/grant/swift-cheat-sheet "Swift Cheat Sheet"
 
 
 
