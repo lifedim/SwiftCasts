@@ -72,9 +72,9 @@ class CounterViewController: UIViewController {
         
         timeLabel!.frame = CGRectMake(10, 40, self.view.bounds.size.width-20, 120)
         
-        let gap = ( self.view.bounds.size.width - 10*2 - (Float(timeButtons!.count) * 64) ) / Float(timeButtons!.count - 1)
+        let gap = ( self.view.bounds.size.width - 10*2 - (CGFloat(timeButtons!.count) * 64) ) / CGFloat(timeButtons!.count - 1)
         for (index, button) in enumerate(timeButtons!) {
-            let buttonLeft = 10 + (64 + gap) * Float(index)
+            let buttonLeft = 10 + (64 + gap) * CGFloat(index)
             button.frame = CGRectMake(buttonLeft, self.view.bounds.size.height-120, 64, 44)
         }
         
