@@ -1,4 +1,4 @@
 SwiftCasts
 ==========
 
-Video tutorials for Swift
+Tutorials for Swift
