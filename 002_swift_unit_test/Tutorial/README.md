@@ -3,6 +3,8 @@
 
 这篇教程将简要介绍如何在Swift项目中使用`XCTest.framework`进行代码单元测试。本教程中用到的示例代码托管在[Github](https://github.com/lifedim/SwiftCasts/tree/master/002_swift_unit_test)。
 
+在介绍之前，建议大家读一这篇文章：[为什么要做单元测试？](http://www.cnblogs.com/weidagang2046/articles/1753417.html)
+
 ### 默认测试类
 
 首先我们新建一个项目`SwiftUnitTest`，它将在`SwiftUnitTestTests`目录下自动创建出一个默认测试类（文件）`SwiftUnitTestTests.swift`：
