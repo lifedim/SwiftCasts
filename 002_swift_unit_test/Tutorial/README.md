@@ -37,15 +37,15 @@
 	    
 	}
 
-在这个文件中定义了一个测试类`SwiftUnitTestTests`，它里面包含了一个`setUp()`方法和`tearDown()`方法，分别用来在每个测试方法运行之前做初始化准备，和在测试方法运行之后做清理工作。此外，它还包含了以`test`开头命名的2个测试方法）：`testExample()`和`testPerformanceExample()`。
+在这个文件中定义了一个测试类`SwiftUnitTestTests`，它里面包含了一个`setUp()`方法和`tearDown()`方法，分别用来在每个测试方法运行之前做初始化准备，和在测试方法运行之后做清理工作。此外，它还包含了以`test`开头命名的2个测试方法：`testExample()`和`testPerformanceExample()`。
 
 我们需要注意：
 
-- 任何以`test`开头命名的的方法都是一个测试方法，在每次单元测试执行时自动执行，它没有无返回值；
+- 任何以`test`开头命名的的方法都是一个测试方法，在每次单元测试执行时自动执行，它没有返回值；
 - 在测试方法中，可以使用`self.measureBlock() { }`来测量代码的运行时间；
 - 测试方法执行的顺序跟测试方法名有关，比如`test01()`会优先于`test02()`执行
 
-通过快捷键`CMD+U`即可运行当前类中的单元测试。可以看到所有测试方法已通过：
+通过快捷键`CMD+U`即可运行当前的单元测试。可以看到所有测试方法已通过：
 
 ![testcase1](testcase1.png)
 
@@ -75,7 +75,7 @@
 
 这个类定义了一种青蛙类型，它有一个属性叫`name`，其初始状态为`Tadpole`蝌蚪。我们可以对其调用`transform`方法，之后它就变成了`Frog`青蛙。
 
-然后我们新建一个针对青蛙类做测试的测试类：选择`Test Case Class`, 为此类取名为`FrogTests`（建议使用`<待测试类名>Tests`的形式）：
+然后我们新建一个针对青蛙类做测试的测试类：新建文件，选择`Test Case Class`, 为此类取名为`FrogTests`（建议使用`<待测试类名>Tests`的形式）：
 
 然后我们删除原来的`testExample`测试方法，并新建方法:
 
@@ -103,7 +103,7 @@ Swift中支持ObjC中原有的所有断言：
 - XCTAssertEqual(a1, a2, format...)判断相等（当a1和a2是 C语言标量、结构体或联合体时使用,实际测试发现NSString也可以）；
 - ...
 
-所有断言列表请参考[ios UnitTest 学习笔记](http://ko.bubufx.com/infodetail_4174.html)。但基本上大部分断言都是衍生自`XCTAssert`的，只使用`XCTAssert`能解决大部分问题。
+所有断言列表请参考[ios UnitTest 学习笔记](http://ko.bubufx.com/infodetail_4174.html)。由于大部分断言都是衍生自`XCTAssert`的，只使用`XCTAssert`能解决大部分问题。
 
 此时执行`CMD+U`运行单元测试，可以看到单元测试都已通过。
 
