@@ -85,7 +85,7 @@ request.GET("http://vluxe.io", parameters: nil, success: {(response: AnyObject?)
     }
 ```
 
-### 完整实例
+### 实例
 
 最后，我写了一个简单的例子来通过调用金山词霸的API获取单词`swift`的解释。项目使用`SwiftHTTP`来作网络请求，使用`SwiftyJSON`来解析JSON数据，代码托管在[Github](https://github.com/lifedim/SwiftCasts/tree/master/003_swift_http_test)，核心代码如下：
 
