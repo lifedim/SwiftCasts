@@ -14,7 +14,7 @@ class CounterViewController: UIViewController {
     var timeLabel: UILabel? //显示剩余时间
     var startStopButton: UIButton? //开始/停止按钮
     var clearButton: UIButton? //复位按钮
-    var timeButtons: UIButton[]? //设置时间的按钮数组
+    var timeButtons: [UIButton]? //设置时间的按钮数组
     let timeButtonInfos = [("1分", 60), ("3分", 180), ("5分", 300), ("秒", 1)]
     
     var remainingSeconds: Int = 0 {
@@ -99,7 +99,7 @@ class CounterViewController: UIViewController {
     
     func setuptimeButtons() {
         
-        var buttons: UIButton[] = []
+        var buttons: [UIButton] = []
         for (index, (title, _)) in enumerate(timeButtonInfos) {
             
             let button: UIButton = UIButton()
