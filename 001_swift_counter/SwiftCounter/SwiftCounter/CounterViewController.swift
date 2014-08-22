@@ -90,11 +90,11 @@ class CounterViewController: UIViewController {
         
         timeLabel = UILabel()
         timeLabel!.textColor = UIColor.whiteColor()
-        timeLabel!.font = UIFont(name: nil, size: 80)
+        timeLabel!.font = UIFont(name: "Helvetica", size: 80)
         timeLabel!.backgroundColor = UIColor.blackColor()
         timeLabel!.textAlignment = NSTextAlignment.Center
         
-        self.view.addSubview(timeLabel)
+        self.view.addSubview(timeLabel!)
     }
     
     func setuptimeButtons() {
@@ -112,7 +112,7 @@ class CounterViewController: UIViewController {
             
             button.addTarget(self, action: "timeButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
             
-            buttons += button
+            buttons += [button]
             self.view.addSubview(button)
             
         }
@@ -130,7 +130,7 @@ class CounterViewController: UIViewController {
         startStopButton!.setTitle("启动/停止", forState: UIControlState.Normal)
         startStopButton!.addTarget(self, action: "startStopButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         
-        self.view.addSubview(startStopButton)
+        self.view.addSubview(startStopButton!)
         
         clearButton = UIButton()
         clearButton!.backgroundColor = UIColor.redColor()
@@ -139,7 +139,7 @@ class CounterViewController: UIViewController {
         clearButton!.setTitle("复位", forState: UIControlState.Normal)
         clearButton!.addTarget(self, action: "clearButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         
-        self.view.addSubview(clearButton)
+        self.view.addSubview(clearButton!)
         
     }
     
@@ -194,7 +194,7 @@ class CounterViewController: UIViewController {
         UIApplication.sharedApplication().cancelAllLocalNotifications()
         let notification = UILocalNotification()
         
-        let timeIntervalSinceNow = seconds.bridgeToObjectiveC().doubleValue
+        let timeIntervalSinceNow = Double(seconds)
         notification.fireDate = NSDate(timeIntervalSinceNow:timeIntervalSinceNow);
         
         notification.timeZone = NSTimeZone.systemTimeZone();
