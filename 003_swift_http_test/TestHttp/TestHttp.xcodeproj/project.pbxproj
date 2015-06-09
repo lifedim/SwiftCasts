@@ -17,7 +17,6 @@
 		3FF1ABB8195A4201008F9130 /* HTTPTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF1ABB1195A4201008F9130 /* HTTPTask.swift */; };
 		3FF1ABB9195A4201008F9130 /* HTTPUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF1ABB2195A4201008F9130 /* HTTPUpload.swift */; };
 		3FF1ABBA195A4201008F9130 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1ABB3195A4201008F9130 /* LICENSE */; };
-		3FF1ABBB195A4201008F9130 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 3FF1ABB4195A4201008F9130 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -244,7 +243,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FF1ABBB195A4201008F9130 /* README.md in Sources */,
 				3FF1ABB8195A4201008F9130 /* HTTPTask.swift in Sources */,
 				3FF1ABB9195A4201008F9130 /* HTTPUpload.swift in Sources */,
 				3FF1AB96195A41D6008F9130 /* AppDelegate.swift in Sources */,

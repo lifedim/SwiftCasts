@@ -24,26 +24,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var word = "swift"
         var request = HTTPTask()
         var params: Dictionary<String, AnyObject> = ["w": word, "key": "30CBA9DDD34B16DB669A9B214C941F14", "type": "json"]
-        request.GET("http://dict-co.iciba.com/api/dictionary.php", parameters: params, success: {(response: AnyObject?) -> Void in
+        request.GET("http://dict-co.iciba.com/api/dictionary.php", parameters: params, success: {(response: HTTPResponse) -> Void in
             
-            //转换成JSON数据
-            let json = JSONValue(response!)
-            
-            //得到JSON中第一个解释
-            let meaning = json["symbols"][0]["parts"][0]["means"]
-            
-            dispatch_async(dispatch_get_main_queue(), {
+            if let responseObject: AnyObject = response.responseObject {
+                //转换成JSON数据
+                let json = JSONValue(responseObject)
                 
-                //注意，`SwiftHTTP`回调中如果要操作UI，必须先用gcd切换到主线程
-                let alert = UIAlertView()
-                alert.title = word
-                alert.message = meaning.description
-                alert.addButtonWithTitle("确定")
-                alert.show()
+                //得到JSON中第一个解释
+                let meaning = json["symbols"][0]["parts"][0]["means"]
                 
-            })
-            
-            println("\(json)")
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    //注意，`SwiftHTTP`回调中如果要操作UI，必须先用gcd切换到主线程
+                    let alert = UIAlertView()
+                    alert.title = word
+                    alert.message = meaning.description
+                    alert.addButtonWithTitle("确定")
+                    alert.show()
+                    
+                    })
+                
+                println("\(json)")
+            }
             
             },failure: {(error: NSError) -> Void in
                 
