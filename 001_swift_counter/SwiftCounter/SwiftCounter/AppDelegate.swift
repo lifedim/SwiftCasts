@@ -23,8 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.rootViewController = CounterViewController()
         
         //register notification
-        application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: UIUserNotificationType.Sound | UIUserNotificationType.Alert |
-            UIUserNotificationType.Badge, categories: nil
+        application.registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Sound, .Alert, .Badge], categories: nil
             ))
         
         
