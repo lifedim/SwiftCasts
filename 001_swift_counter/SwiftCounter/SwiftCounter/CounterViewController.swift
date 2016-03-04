@@ -23,7 +23,7 @@ class CounterViewController: UIViewController {
         let mins = newSeconds / 60
         let seconds = newSeconds % 60
 
-        timeLabel!.text = NSString(format: "%02d:%02d", mins, seconds)
+        timeLabel!.text = String(format: "%02d:%02d", mins, seconds)
         
         if newSeconds <= 0 {
             isCounting = false
