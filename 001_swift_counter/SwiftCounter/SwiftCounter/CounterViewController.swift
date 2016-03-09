@@ -8,128 +8,141 @@
 
 import UIKit
 
-class CounterViewController: UIViewController {
+// 随机色
+func randomColor() -> UIColor {
+    return UIColor(red: CGFloat(arc4random_uniform(255))/255.0, green: CGFloat(arc4random_uniform(255))/255.0, blue: CGFloat(arc4random_uniform(255))/255.0, alpha: 1.0)
+}
 
-    ///UI Controls
-    var timeLabel: UILabel? //显示剩余时间
-    var startStopButton: UIButton? //开始/停止按钮
-    var clearButton: UIButton? //复位按钮
-    var timeButtons: [UIButton]? //设置时间的按钮数组
-    let timeButtonInfos = [("1分", 60), ("3分", 180), ("5分", 300), ("秒", 1)]
-    
-    var remainingSeconds: Int = 0 {
-    willSet(newSeconds) {
-        
-        let mins = newSeconds / 60
-        let seconds = newSeconds % 60
-
-        timeLabel!.text = NSString(format: "%02d:%02d", mins, seconds)
-        
-        if newSeconds <= 0 {
-            isCounting = false
-            self.startStopButton!.alpha = 0.3
-            self.startStopButton!.enabled = false
-        } else {
-            self.startStopButton!.alpha = 1.0
-            self.startStopButton!.enabled = true
-        }
-
-    }
-    }
-    
+class ViewController: UIViewController {
+    // 声明子控件
+    var timeLabel: UILabel?
+    var timeButtons: [UIButton]?
+    var startStopButton: UIButton?
+    var clearButton: UIButton?
     var timer: NSTimer?
-    var isCounting: Bool = false {
-    willSet(newValue) {
-        if newValue {
-            timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateTimer:", userInfo: nil, repeats: true)
-        } else {
-            timer?.invalidate()
-            timer = nil
+    // 按钮信息
+    let timeButtonInfos = [("1分", 60), ("3分", 180), ("5分", 300), ("1秒", 1)]
+    // 当前倒计时剩余的秒数
+    var remainingSeconds: Int = 0 {
+        // 添加一个willSet属性 - 重写set方法
+        willSet(newSeconds) {
+            buttonStates(startStopButton!, enabled: (newSeconds > 0))
+            let mins = newSeconds / 60
+            let seconds = newSeconds % 60
+            self.timeLabel!.text = NSString(format: "%02d : %02d", mins, seconds) as String
         }
-        setSettingButtonsEnabled(!newValue)
     }
+    
+    var isCounting: Bool = false {
+        willSet(newValue) {
+            if newValue { // ture 定时器开启
+                timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "updateTimer", userInfo: nil, repeats: true)
+                // 注册一个本地通知
+                createAndFireLocalNotificationAfterSeconds(remainingSeconds)
+            } else {
+                // 停止计时并清空定时器
+                timer?.invalidate()
+                timer = nil
+            }
+            
+            // 判断按钮的状态, 来修改按钮的显示
+            buttonStates(clearButton!, enabled: !newValue)
+            for button in timeButtons! {
+                buttonStates(button, enabled: !newValue)
+            }
+            
+            if remainingSeconds <= 0 {
+                startStopButton!.selected = newValue
+                buttonStates(startStopButton!, enabled: newValue)
+            }
+        }
+    }
+    
+    func buttonStates(button: UIButton ,enabled: Bool) {
+        button.enabled = enabled
+        button.alpha = enabled ? 1.0 : 0.3
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.view.backgroundColor = UIColor.whiteColor()
-
-        setupTimeLabel()
-        setuptimeButtons()
-        setupActionButtons()
-     
-        remainingSeconds = 0
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        self.setupTimeLabel()
+        self.setupTimeButtons()
+        self.setupActionButtons()
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         
-        timeLabel!.frame = CGRectMake(10, 40, self.view.bounds.size.width-20, 120)
+        let viewW = self.view.bounds.size.width
+        let viewH = self.view.bounds.size.height
         
-        let gap = ( self.view.bounds.size.width - 10*2 - (CGFloat(timeButtons!.count) * 64) ) / CGFloat(timeButtons!.count - 1)
-        for (index, button) in enumerate(timeButtons!) {
-            let buttonLeft = 10 + (64 + gap) * CGFloat(index)
-            button.frame = CGRectMake(buttonLeft, self.view.bounds.size.height-120, 64, 44)
+        // 时间显示
+        let margin: CGFloat = 10
+        let timeLabelW: CGFloat = 40
+        let timeLabelH: CGFloat = 120
+        timeLabel!.frame = CGRectMake(margin, timeLabelW, viewW - margin * 2, timeLabelH)
+        
+        // 时间按钮
+        let timeButtonW: CGFloat = (viewW - margin * CGFloat(timeButtons!.count + 1)) / CGFloat(timeButtons!.count)
+        let timeButtonH: CGFloat = 44
+        let timeButtonY: CGFloat = viewH - 120
+        for (index, button) in timeButtons!.enumerate() {
+            let timeButtonX = (timeButtonW + margin) * CGFloat(index) + margin
+            button.frame = CGRectMake(timeButtonX, timeButtonY, timeButtonW, timeButtonH)
         }
         
-        startStopButton!.frame = CGRectMake(10, self.view.bounds.size.height-60, self.view.bounds.size.width-20-100, 44)
-        clearButton!.frame = CGRectMake(10+self.view.bounds.size.width-20-100+20, self.view.bounds.size.height-60, 80, 44)
+        startStopButton!.frame = CGRectMake(margin, CGRectGetMaxY(timeButtons![0].frame) + margin, viewW * 0.7 - margin * 2, timeButtonH)
         
+        clearButton!.frame = CGRectMake(CGRectGetMaxX(startStopButton!.frame) + margin, startStopButton!.frame.origin.y, viewW - CGRectGetMaxX(startStopButton!.frame) - margin * 2, timeButtonH)
     }
     
-    
-    //UI Helpers
-
+    // 初始化时间label
     func setupTimeLabel() {
-        
         timeLabel = UILabel()
         timeLabel!.textColor = UIColor.whiteColor()
-        timeLabel!.font = UIFont(name: "Helvetica", size: 80)
+        timeLabel!.font = UIFont.systemFontOfSize(80)
         timeLabel!.backgroundColor = UIColor.blackColor()
         timeLabel!.textAlignment = NSTextAlignment.Center
+        timeLabel!.text = "00 : 00"
         
         self.view.addSubview(timeLabel!)
     }
     
-    func setuptimeButtons() {
-        
+    // 初始化按钮
+    func setupTimeButtons() {
+        // 创建一个button数组
         var buttons: [UIButton] = []
-        for (index, (title, _)) in enumerate(timeButtonInfos) {
-            
+        for(index, (title, _)) in timeButtonInfos.enumerate() {
+            // 实例化一个button
             let button: UIButton = UIButton()
-            button.tag = index //保存按钮的index
-            button.setTitle("\(title)", forState: UIControlState.Normal)
+            // 获取button的tag
+            button.tag = index
+            button.setTitle(title, forState: UIControlState.Normal)
             
-            button.backgroundColor = UIColor.orangeColor()
+            button.backgroundColor = randomColor()
             button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
             button.setTitleColor(UIColor.blackColor(), forState: UIControlState.Highlighted)
             
             button.addTarget(self, action: "timeButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
             
+            // 将元素添加进数组
             buttons += [button]
-            self.view.addSubview(button)
             
+            self.view.addSubview(button)
         }
         timeButtons = buttons
-        
     }
     
+    // 操作按钮
     func setupActionButtons() {
-        
-        //create start/stop button
         startStopButton = UIButton()
+        buttonStates(startStopButton!, enabled: false)
         startStopButton!.backgroundColor = UIColor.redColor()
         startStopButton!.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        startStopButton!.setTitleColor(UIColor.blackColor(), forState: UIControlState.Highlighted)
+        startStopButton!.setTitleColor(UIColor.blackColor(), forState: UIControlState.Selected)
         startStopButton!.setTitle("启动/停止", forState: UIControlState.Normal)
         startStopButton!.addTarget(self, action: "startStopButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
-        
         self.view.addSubview(startStopButton!)
         
         clearButton = UIButton()
@@ -138,71 +151,57 @@ class CounterViewController: UIViewController {
         clearButton!.setTitleColor(UIColor.blackColor(), forState: UIControlState.Highlighted)
         clearButton!.setTitle("复位", forState: UIControlState.Normal)
         clearButton!.addTarget(self, action: "clearButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
-        
         self.view.addSubview(clearButton!)
-        
     }
     
-    func setSettingButtonsEnabled(enabled: Bool) {
-        for button in self.timeButtons! {
-            button.enabled = enabled
-            button.alpha = enabled ? 1.0 : 0.3
-        }
-        clearButton!.enabled = enabled
-        clearButton!.alpha = enabled ? 1.0 : 0.3
-    }
-    
-    //Actions
-    
+    // 按钮响应方法
     func timeButtonTapped(sender: UIButton) {
-        let (title, seconds) = timeButtonInfos[sender.tag]
-        remainingSeconds += seconds
+        // 根据按钮的tag取出元组中seconds值, _表示不用到数组的这个元素
+        let (_, seconds) = timeButtonInfos[sender.tag]
+        remainingSeconds += seconds;
+        
+        // 当点击时间的时候就开始就变成true
+        buttonStates(startStopButton!, enabled: true)
     }
     
     func startStopButtonTapped(sender: UIButton) {
-        isCounting = !isCounting
-        
-        if isCounting {
-            createAndFireLocalNotificationAfterSeconds(remainingSeconds)
-        } else {
-            UIApplication.sharedApplication().cancelAllLocalNotifications()
-        }
-        
+        sender.selected = !sender.selected
+        // 开始计时
+        self.isCounting = sender.selected
     }
     
     func clearButtonTapped(sender: UIButton) {
-        remainingSeconds = 0
-    }
-    
-    func updateTimer(sender: NSTimer) {
-        remainingSeconds -= 1
         
-        if remainingSeconds <= 0 {
-            let alert = UIAlertView()
-            alert.title = "计时完成！"
-            alert.message = ""
-            alert.addButtonWithTitle("OK")
-            alert.show()
-
+        if remainingSeconds > 0 {
+            remainingSeconds = 0
         }
     }
     
-    //Helpers
+    func updateTimer() {
+        remainingSeconds -= 1
+        if remainingSeconds <= 0 {
+            let alert = UIAlertController(title: "计时完成", message: nil, preferredStyle: UIAlertControllerStyle.Alert)
+            let action = UIAlertAction(title: "知道了", style: UIAlertActionStyle.Default, handler:nil)
+            alert.addAction(action)
+            self.presentViewController(alert, animated: true, completion: nil)
+            isCounting = false
+        }
+    }
     
+    // 创建一个本地通知
     func createAndFireLocalNotificationAfterSeconds(seconds: Int) {
-        
+        // 取消当前app在本地注册的消息
         UIApplication.sharedApplication().cancelAllLocalNotifications()
         let notification = UILocalNotification()
+        let timeIntervalSinceNow = NSTimeInterval(seconds)
         
-        let timeIntervalSinceNow = Double(seconds)
-        notification.fireDate = NSDate(timeIntervalSinceNow:timeIntervalSinceNow);
+        // 消息激活时间(开始计时的时间)
+        notification.fireDate = NSDate(timeIntervalSinceNow: timeIntervalSinceNow)
+        // 设置时区
+        notification.timeZone = NSTimeZone.systemTimeZone()
         
-        notification.timeZone = NSTimeZone.systemTimeZone();
-        notification.alertBody = "计时完成！";
+        notification.alertBody = "计时完成"
         
-        UIApplication.sharedApplication().scheduleLocalNotification(notification);
-        
+        UIApplication.sharedApplication().scheduleLocalNotification(notification)
     }
-
-
 }
